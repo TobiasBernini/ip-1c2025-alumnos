@@ -7,32 +7,37 @@ from ..utilities import translator
 from django.contrib.auth import get_user
 
 # función que devuelve un listado de cards. Cada card representa una imagen de la API de Pokemon
-def getAllImages():
-    # debe ejecutar los siguientes pasos:
-    # 1) traer un listado de imágenes crudas desde la API (ver transport.py)
-    # 2) convertir cada img. en una card.
-    # 3) añadirlas a un nuevo listado que, finalmente, se retornará con todas las card encontradas.
-    pass
+def getAllImages():# EN TEORIA ESTA HECHO Y FUNCIONA 
+    lista_pokemon = transport.getAllImages()#trae la lista desde transport.py
+    cards = [translator.fromRequestIntoCard(pokemon) for pokemon in lista_pokemon] #Convierte cada Pokémon en una tarjeta usando el traductor y guarda todas en la lista cards
+    return cards
 
 # función que filtra según el nombre del pokemon.
 def filterByCharacter(name):
     filtered_cards = []
-
-    for card in getAllImages():
-        # debe verificar si el name está contenido en el nombre de la card, antes de agregarlo al listado de filtered_cards.
-        filtered_cards.append(card)
-
+    nombreminusculas = name.lower()
+    cartas = getAllImages()
+    for card in cartas:
+        if nombreminusculas in card.name.lower():
+            filtered_cards.append(card)
     return filtered_cards
 
 # función que filtra las cards según su tipo.
 def filterByType(type_filter):
-    filtered_cards = []
+    filtered_cards = []  # aca se guarda la lista de las cartas que sean del tipo que pedimos 
+    tipo = type_filter.lower()  # Convertimos el tipo recibido a minúsculas para comparar sin importar mayúsculas/minúsculas
 
+    # Recorremos todas las cartas que devuelve getAllImages()
     for card in getAllImages():
-        # debe verificar si la casa de la card coincide con la recibida por parámetro. Si es así, se añade al listado de filtered_cards.
-        filtered_cards.append(card)
+        # Normalizamos todos los tipos de la carta a minúsculas
+        tiposDePokemon = [t.lower() for t in card.types]
 
-    return filtered_cards
+        # Verificamos si el tipo buscado está dentro de los tipos de la carta
+        if tipo in tiposDePokemon:
+            filtered_cards.append(card)  # Si coincide se agrega la carta a la lista filtrada
+
+    return filtered_cards  # Devolvemos la lista con todas las cartas que coinciden
+
 
 # añadir favoritos (usado desde el template 'home.html')
 def saveFavourite(request):
