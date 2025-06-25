@@ -1,5 +1,7 @@
 {% extends 'header.html' %}
 {% block content %}
+
+<div id="contenido" style="display: none;">
 <main>
     <h1 class="text-center">Buscador de Pokémon</h1>
 
@@ -43,7 +45,15 @@
             <div class="card mb-3 ms-5 {{ img.border_class }}" style="max-width: 540px;">
                 <div class="row g-0">
                     <div class="col-md-4">
+                        <!-- Spinner de carga -->
+                            <div id="spinner" class="d-flex justify-content-center align-items-center" style="height: 70vh;">
+                            <div class="spinner-border text-primary" role="status" style="width: 4rem; height: 4rem;">
+                            <span class="visually-hidden">Cargando...</span>
+                            </div>
+                            </div>
+                            <div id="contenido" style="display: none;">
                         <img src="{{ img.image }}" class="card-img-top" alt="imagen">
+                        </div> <!-- cierre del div#contenido -->
                     </div>
                     <div class="col-md-8">
                         <div class="card-body">
@@ -94,4 +104,12 @@
         {% endif %}
     </div>
 </main>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Oculta el spinner y muestra el contenido al cargarse todo
+        document.getElementById("spinner").style.display = "none";
+        document.getElementById("contenido").style.display = "block";
+    });
+</script>
+
 {% endblock %}
