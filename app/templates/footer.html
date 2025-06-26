@@ -1,9 +1,38 @@
-<footer class="bg-body-tertiary text-center text-lg-start fixed-bottom">
-    <div class="text-center p-3" style="display: flex;background-color: rgb(255 255 255 / 78%);justify-content: space-between;">
+<footer class="footer-pokedex">
+    <style>
+        .footer-pokedex {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(to right, #ff3b30, #d62828);
+            border-top: 4px solid #212121;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            color: #fff;
+            text-shadow: 1px 1px #00000088;
+            box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.4);
+            z-index: 9999;
+        }
+
+        .footer-pokedex .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        @media (max-width: 576px) {
+            .footer-pokedex .footer-content {
+                flex-direction: column;
+                gap: 5px;
+                text-align: center;
+                font-size: 0.6rem;
+            }
+        }
+    </style>
+
+    <div class="footer-content">
         <strong>Introducción a la Programación | UNGS</strong>
-        <strong>{{VERSION}}</strong>
+        <strong>{{ VERSION }}</strong>
     </div>
 </footer>
-</body>
-
-</html>

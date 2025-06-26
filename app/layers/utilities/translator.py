@@ -12,7 +12,7 @@ def fromRequestIntoCard(poke_data):
         base=poke_data.get('base_experience'),
         image=safe_get(poke_data, 'sprites', 'other', 'official-artwork', 'front_default'),
         types=getTypes(poke_data)
-    )
+    ) 
     return card
 
 # recupera los tipos del JSON

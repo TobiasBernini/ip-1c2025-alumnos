@@ -7,60 +7,59 @@ from ..utilities import translator
 from django.contrib.auth import get_user
 
 # función que devuelve un listado de cards. Cada card representa una imagen de la API de Pokemon
-def getAllImages():# EN TEORIA ESTA HECHO Y FUNCIONA 
-    lista_pokemon = transport.getAllImages()#trae la lista desde transport.py
-    cards = [translator.fromRequestIntoCard(pokemon) for pokemon in lista_pokemon] #Convierte cada Pokémon en una tarjeta usando el traductor y guarda todas en la lista cards
-    return cards
+def getAllImages():
+    lista_pokemon = transport.getAllImages() # Pide todos los Pokémon desde transport.py
+    cards = [translator.fromRequestIntoCard(pokemon) for pokemon in lista_pokemon]# Recorre la lista y convierte cada uno en una Card usando el traductor
+    return cards # Devuelve la lista completa de Cards
+
 
 # función que filtra según el nombre del pokemon.
 def filterByCharacter(name):
-    filtered_cards = []
-    nombreminusculas = name.lower()
-    cartas = getAllImages()
+    filtered_cards = []  # Acá guardamos las cartas que coincidan con la búsqueda
+    nombreminusculas = name.lower()  # Pasamos el nombre ingresado a minúsculas
+    cartas = getAllImages()  # Obtenemos todas las cartas
     for card in cartas:
+        # Si el nombre buscado está dentro del nombre del Pokémon (sin importar mayúsculas)
         if nombreminusculas in card.name.lower():
-            filtered_cards.append(card)
+            filtered_cards.append(card)  # Lo agregamos a la lista filtrada
     return filtered_cards
+
 
 # función que filtra las cards según su tipo.
 def filterByType(type_filter):
-    filtered_cards = []  # aca se guarda la lista de las cartas que sean del tipo que pedimos 
-    tipo = type_filter.lower()  # Convertimos el tipo recibido a minúsculas para comparar sin importar mayúsculas/minúsculas
-
+    filtered_cards = []  # Lista para guardar los Pokémon que coincidan con el tipo
     # Recorremos todas las cartas que devuelve getAllImages()
     for card in getAllImages():
-        # Normalizamos todos los tipos de la carta a minúsculas
-        tiposDePokemon = [t.lower() for t in card.types]
+        # Si el tipo buscado está en los tipos del Pokémon, lo agregamos a la lista
+        if type_filter in card.types:
+            filtered_cards.append(card)
+    return filtered_cards
 
-        # Verificamos si el tipo buscado está dentro de los tipos de la carta
-        if tipo in tiposDePokemon:
-            filtered_cards.append(card)  # Si coincide se agrega la carta a la lista filtrada
-
-    return filtered_cards  # Devolvemos la lista con todas las cartas que coinciden
 
 
 # añadir favoritos (usado desde el template 'home.html')
 def saveFavourite(request):
-    fav = '' # transformamos un request en una Card (ver translator.py)
-    fav.user = get_user(request) # le asignamos el usuario correspondiente.
+    fav = translator.fromTemplateIntoCard(request)
+    fav.user = get_user(request)
 
-    return repositories.save_favourite(fav) # lo guardamos en la BD.
+    if repositories.favourite_exists(fav):
+        return False  # Ya existe, no guardamos
+    else:
+        repositories.save_favourite(fav)
+        return True
+
 
 # usados desde el template 'favourites.html'
 def getAllFavourites(request):
     if not request.user.is_authenticated:
         return []
-    else:
-        user = get_user(request)
 
-        favourite_list = [] # buscamos desde el repositories.py TODOS Los favoritos del usuario (variable 'user').
-        mapped_favourites = []
+    user = get_user(request)
 
-        for favourite in favourite_list:
-            card = '' # convertimos cada favorito en una Card, y lo almacenamos en el listado de mapped_favourites que luego se retorna.
-            mapped_favourites.append(card)
+    favourite_list = repositories.get_all_favourites(user)  # ← función que devuelve queryset o lista de diccionarios
+    mapped_favourites = [translator.fromRepositoryIntoCard(fav) for fav in favourite_list]
 
-        return mapped_favourites
+    return mapped_favourites
 
 def deleteFavourite(request):
     favId = request.POST.get('id')

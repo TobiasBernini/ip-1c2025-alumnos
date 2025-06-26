@@ -41,3 +41,8 @@ def delete_favourite(fav_id):
     except Exception as e:
         print(f"Error al eliminar el favorito: {e}")
         return False
+    
+def favourite_exists(fav):
+    return Favourite.objects.filter(name=fav.name, user=fav.user).exists()
+
+

@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>POKEDEX - IP</title>
     {% load bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %} {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'pokemon.css' %}">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg pokedex-navbar">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Proyecto TP</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -22,21 +22,50 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{% url 'index-page' %}">Inicio</a>
+                        <a class="nav-link active" aria-current="page" href="{% url 'index-page' %}">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
+                                alt="Pokeball" class="nav-icon">
+                            Inicio
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page"
-                            href="{% url 'home' %}"><strong>Galería</strong></a>
+                        <a class="nav-link active" aria-current="page" href="{% url 'home' %}">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png"
+                                alt="Greatball" class="nav-icon">
+                            <strong>Galería</strong>
+                        </a>
                     </li>
                     {% if request.user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'favoritos' %}">Favoritos</a>
+                        <a class="nav-link" href="{% url 'favoritos' %}">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ultra-ball.png"
+                                alt="Ultraball" class="nav-icon">
+                            Favoritos
+                        </a>
                     </li>
                     {% endif %}
                     <li class="nav-item">
                         {% if request.user.is_authenticated %}
-                        <a class="nav-link" href="{% url 'exit' %}">Salir</a> {% else %}
-                        <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a> {% endif %}
+                        <a class="nav-link" href="{% url 'exit' %}">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png"
+                                alt="Masterball" class="nav-icon">
+                            Salir
+                        </a>
+                        {% else %}
+                        <a class="nav-link" href="{% url 'login' %}">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"
+                                alt="Pikachu" class="nav-icon pikachu-icon">
+                            Iniciar sesión
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
+                                alt="Pokeball" class="nav-icon">
+                            Registrarse
+                        </a>
+                    </li>
+                    {% endif %}
                     </li>
                 </ul>
 

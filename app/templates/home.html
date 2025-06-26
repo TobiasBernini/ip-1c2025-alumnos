@@ -1,15 +1,42 @@
-{% extends 'header.html' %}
-{% block content %}
-<main>
-    <h1 class="text-center">Buscador de Pokémon</h1>
+{% extends 'header.html' %} {% block content %}
 
-    <div class="d-flex justify-content-center" style="margin-bottom: 1%">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<div id="spinner" style="
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    background-color: #e0e0d1;
+    border: 8px double #222;
+    padding: 50px 70px;
+    text-align: center;
+    border-radius: 12px;
+    font-family: 'Press Start 2P', monospace;
+    color: #222;
+    box-shadow: 0 0 25px rgba(0,0,0,0.6);
+    display: none;
+    min-width: 340px;
+">
+    <img src="https://i.imgur.com/2LAGnTu.gif" alt="Loading..." width="90" style="margin-bottom: 20px;">
+    <div style="font-size: 16px;">CARGANDO...</div>
+</div>
+
+<main>
+    <h1 class="text-center pokedex-search-title">Buscador de Pokémon</h1>
+
+    <div class="d-flex justify-content-center pokedex-search-container">
         <!-- Buscador del sitio -->
-        <form class="d-flex" action="{% url 'buscar' %}" method="POST">
+        <form action="{% url 'buscar' %}" method="POST" class="pokedex-search-form">
             {% csrf_token %}
-            <input class="form-control me-2" type="search" name="query" placeholder="Pikachu, Charizard, Ditto"
-                aria-label="Buscar">
-            <button class="btn btn-outline-success" type="submit">Buscar</button>
+            <input type="search" name="query" placeholder="Pikachu, Charizard, Ditto" aria-label="Buscar"
+                class="pokedex-search-input" />
+            <button type="submit" class="pokedex-search-btn">
+                <span>Buscar</span>
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"
+                    alt="Pikachu" />
+            </button>
+
         </form>
     </div>
 
@@ -17,19 +44,19 @@
         <form method="post" action="{% url 'filter_by_type' %}">
             {% csrf_token %}
             <input type="hidden" name="type" value="fire">
-            <button type="submit" class="btn btn-danger">FUEGO</button>
+            <button type="submit" class="btn-type-fire">FUEGO</button>
         </form>
 
         <form method="post" action="{% url 'filter_by_type' %}">
             {% csrf_token %}
             <input type="hidden" name="type" value="water">
-            <button type="submit" class="btn btn-primary">AGUA</button>
+            <button type="submit" class="btn-type-water">AGUA</button>
         </form>
 
         <form method="post" action="{% url 'filter_by_type' %}">
             {% csrf_token %}
             <input type="hidden" name="type" value="grass">
-            <button type="submit" class="btn btn-success">PLANTA</button>
+            <button type="submit" class="btn-type-grass">PLANTA</button>
         </form>
     </div>
 
@@ -40,7 +67,9 @@
         {% for img in images %}
         <div class="col">
             <!-- evaluar si la imagen pertenece al tipo fuego, agua o planta -->
-            <div class="card mb-3 ms-5 {{ img.border_class }}" style="max-width: 540px;">
+            <div class="card mb-3 ms-5 {% if 'fire' in img.types %}border-fire{% elif 'water' in img.types %}border-water{% elif 'grass' in img.types %}border-grass{% endif %}"
+                style="max-width: 540px;">
+
                 <div class="row g-0">
                     <div class="col-md-4">
                         <img src="{{ img.image }}" class="card-img-top" alt="imagen">
@@ -53,18 +82,18 @@
                                     alt="Master Ball">
                             </h3>
                             <p class="card-text">
-                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <div class="pokemon-types">
                                 {% for poketype in img.types %}
-                                <strong><em>{{ poketype }}</em></strong>
+                                <span class="pokemon-type {{ poketype|lower }}">{{ poketype|title }}</span>
                                 {% endfor %}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                    aria-label="Close"></button>
+
                             </div>
                             </p>
-                            <p class="card-text"><small class="text-body-secondary">Altura: {{ img.height }}</small></p>
-                            <p class="card-text"><small class="text-body-secondary">Peso: {{ img.weight }}</small></p>
-                            <p class="card-text"><small class="text-body-secondary">Nivel de experiencia base:
-                                    {{img.base }}</small></p>
+                            <div class="pokemon-stats">
+                                <div><strong>Altura:</strong> {{ img.height }}</div>
+                                <div><strong>Peso:</strong> {{ img.weight }}</div>
+                                <div><strong>Nivel de experiencia base:</strong> {{ img.base }}</div>
+                            </div>
                         </div>
 
                         {% if request.user.is_authenticated %}
@@ -76,14 +105,18 @@
                                 <input type="hidden" name="weight" value="{{ img.weight }}">
                                 <input type="hidden" name="types" value="{{ img.types }}">
                                 <input type="hidden" name="image" value="{{ img.image }}">
-                                {% if img in favourite_list %}
+                                {% if img.name in favorite_names %}
                                 <button type="submit" class="btn btn-primary btn-sm float-left" style="color:white"
-                                    disabled>✔️ Favoritos</button>
+                                    disabled>
+                                    ✔️ ya está en favoritos
+                                </button>
                                 {% else %}
-                                <button type="submit" class="btn btn-primary btn-sm float-left" style="color:white">❤️
-                                    Favoritos</button>
+                                <button type="submit" class="btn btn-primary btn-sm float-left" style="color:white">
+                                    ❤️ Favoritos
+                                </button>
                                 {% endif %}
                             </form>
+
                         </div>
                         {% endif %}
                     </div>
@@ -94,4 +127,26 @@
         {% endif %}
     </div>
 </main>
+
+<script>
+    window.addEventListener('load', function () {
+        // Cuando toda la página (imágenes incluidas) esté cargada
+        document.getElementById('spinner').style.display = 'none';
+        document.getElementById('contenido').style.display = 'block';
+    });
+
+    // Además, mantener el spinner si se envía un formulario (ya lo tenías)
+    document.addEventListener('DOMContentLoaded', function () {
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+            form.addEventListener('submit', function () {
+                document.getElementById('spinner').style.display = 'block';
+                document.getElementById('contenido').style.display = 'none';
+            });
+        });
+    });
+</script>
+
+
+
 {% endblock %}

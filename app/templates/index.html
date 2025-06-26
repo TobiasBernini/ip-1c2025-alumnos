@@ -1,9 +1,27 @@
-{% extends 'header.html' %} {% block content %} {% if request.user.is_authenticated %}
-<h2 class="text-center">Bienvenido {{ user.username | upper }}!</h2>
-{% else %}
-<h2 class="text-center">Bienvenido!</h2>
-{% endif %}
-<p class="text-center">
-    Mirá las imágenes desde <a href="{% url 'home' %}">este link.</a>
-</p>
+{% extends 'header.html' %} {% block content %}
+<div class="welcome-wrapper">
+    <div class="welcome-card">
+        <div class="pokeball-row">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
+                alt="Pokéball">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png"
+                alt="Great Ball">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ultra-ball.png"
+                alt="Ultra Ball">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png"
+                alt="Master Ball">
+        </div>
+        {% if request.user.is_authenticated %}
+        <h2 class="welcome-title">
+            ¡Bienvenido, <span class="pokedex-screen">{{ user.username|upper }}</span>!
+        </h2>
+        <p class="welcome-text">Estás listo para continuar tu aventura Pokémon.</p>
+        <a href="{% url 'home' %}" class="welcome-button">Ir a la Pokédex</a>
+        {% else %}
+        <h2 class="welcome-title">¡Bienvenido Entrenador!</h2>
+        <p class="welcome-text">Iniciá sesión para acceder a la Pokédex.</p>
+        <a href="{% url 'home' %}" class="welcome-button">Ver Pokedex</a>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}
