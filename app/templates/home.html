@@ -1,45 +1,45 @@
-{% extends 'header.html' %} {% block content %}
-
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-<div id="spinner" style="
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 9999;
-    background-color: #e0e0d1;
-    border: 8px double #222;
-    padding: 50px 70px;
-    text-align: center;
-    border-radius: 12px;
-    font-family: 'Press Start 2P', monospace;
-    color: #222;
-    box-shadow: 0 0 25px rgba(0,0,0,0.6);
-    display: none;
-    min-width: 340px;
-">
-    <img src="https://i.imgur.com/2LAGnTu.gif" alt="Loading..." width="90" style="margin-bottom: 20px;">
-    <div style="font-size: 16px;">CARGANDO...</div>
-</div>
-
+{% extends 'header.html' %}
+{% block content %}
 <main>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <!-- Spinner general -->
+    <div id="global-spinner" style="
+        position: fixed;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+        background-color: #e0e0d1;
+        border: 8px double #222;
+        padding: 50px 70px;
+        text-align: center;
+        border-radius: 12px;
+        font-family: 'Press Start 2P', monospace;
+        color: #222;
+        box-shadow: 0 0 25px rgba(0,0,0,0.6);
+        display: none;
+        min-width: 340px;">
+        <img src="https://i.imgur.com/2LAGnTu.gif" alt="Loading..." width="90" style="margin-bottom: 20px;">
+        <div style="font-size: 16px;">CARGANDO...</div>
+    </div>
+
+    <!-- Título -->
     <h1 class="text-center pokedex-search-title">Buscador de Pokémon</h1>
 
+    <!-- Buscador -->
     <div class="d-flex justify-content-center pokedex-search-container">
-        <!-- Buscador del sitio -->
         <form action="{% url 'buscar' %}" method="POST" class="pokedex-search-form">
             {% csrf_token %}
-            <input type="search" name="query" placeholder="Pikachu, Charizard, Ditto" aria-label="Buscar"
-                class="pokedex-search-input" />
+            <input type="search" name="query" placeholder="Pikachu, Charizard, Ditto" class="pokedex-search-input" />
             <button type="submit" class="pokedex-search-btn">
                 <span>Buscar</span>
                 <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"
                     alt="Pikachu" />
             </button>
-
         </form>
     </div>
 
+    <!-- Filtros por tipo -->
     <div class="d-flex gap-1 col-2 mx-auto mb-3">
         <form method="post" action="{% url 'filter_by_type' %}">
             {% csrf_token %}
@@ -60,16 +60,15 @@
         </form>
     </div>
 
+    <!-- Resultados -->
     <div class="row row-cols-1 row-cols-md-3 g-4">
         {% if images|length == 0 %}
         <h2 class="text-center">La búsqueda no arrojó resultados...</h2>
         {% else %}
         {% for img in images %}
         <div class="col">
-            <!-- evaluar si la imagen pertenece al tipo fuego, agua o planta -->
             <div class="card mb-3 ms-5 {% if 'fire' in img.types %}border-fire{% elif 'water' in img.types %}border-water{% elif 'grass' in img.types %}border-grass{% endif %}"
                 style="max-width: 540px;">
-
                 <div class="row g-0">
                     <div class="col-md-4">
                         <img src="{{ img.image }}" class="card-img-top" alt="imagen">
@@ -79,14 +78,13 @@
                             <h3 class="card-title">
                                 {{ img.name }} #{{ img.id }}
                                 <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
-                                    alt="Master Ball">
+                                    alt="Pokeball">
                             </h3>
                             <p class="card-text">
                             <div class="pokemon-types">
                                 {% for poketype in img.types %}
                                 <span class="pokemon-type {{ poketype|lower }}">{{ poketype|title }}</span>
                                 {% endfor %}
-
                             </div>
                             </p>
                             <div class="pokemon-stats">
@@ -106,17 +104,12 @@
                                 <input type="hidden" name="types" value="{{ img.types }}">
                                 <input type="hidden" name="image" value="{{ img.image }}">
                                 {% if img.name in favorite_names %}
-                                <button type="submit" class="btn btn-primary btn-sm float-left" style="color:white"
-                                    disabled>
-                                    ✔️ ya está en favoritos
-                                </button>
+                                <button type="submit" class="btn btn-primary btn-sm float-left" disabled>✔️ ya está en
+                                    favoritos</button>
                                 {% else %}
-                                <button type="submit" class="btn btn-primary btn-sm float-left" style="color:white">
-                                    ❤️ Favoritos
-                                </button>
+                                <button type="submit" class="btn btn-primary btn-sm float-left">❤️ Favoritos</button>
                                 {% endif %}
                             </form>
-
                         </div>
                         {% endif %}
                     </div>
@@ -130,20 +123,16 @@
 
 <script>
     window.addEventListener('load', function () {
-        document.getElementById('spinner').style.display = 'none';
-        document.getElementById('contenido').style.display = 'block';
+        document.getElementById('global-spinner').style.display = 'none';
     });
+
     document.addEventListener('DOMContentLoaded', function () {
         const forms = document.querySelectorAll('form');
         forms.forEach(form => {
             form.addEventListener('submit', function () {
-                document.getElementById('spinner').style.display = 'block';
-                document.getElementById('contenido').style.display = 'none';
+                document.getElementById('global-spinner').style.display = 'block';
             });
         });
     });
 </script>
-
-
-
 {% endblock %}
