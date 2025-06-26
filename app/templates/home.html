@@ -130,12 +130,9 @@
 
 <script>
     window.addEventListener('load', function () {
-        // Cuando toda la página (imágenes incluidas) esté cargada
         document.getElementById('spinner').style.display = 'none';
         document.getElementById('contenido').style.display = 'block';
     });
-
-    // Además, mantener el spinner si se envía un formulario (ya lo tenías)
     document.addEventListener('DOMContentLoaded', function () {
         const forms = document.querySelectorAll('form');
         forms.forEach(form => {

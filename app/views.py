@@ -76,67 +76,36 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
+from .forms import UserRegisterForm
 
 def register_user(request):
     if request.method == 'POST':
-        first_name = request.POST.get('first_name', '').strip()
-        last_name = request.POST.get('last_name', '').strip()
-        username = request.POST.get('username', '').strip()
-        email = request.POST.get('email', '').strip()
-        password = request.POST.get('password', '')
-        password2 = request.POST.get('password2', '')
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            password = form.cleaned_data['password']
+            user.set_password(password)
+            user.save()
 
-        if password != password2:
-            messages.error(request, 'Las contraseñas no coinciden.')
-            return render(request, 'register.html', {
-                'first_name': first_name,
-                'last_name': last_name,
-                'username': username,
-                'email': email
-            })
+            # Enviar correo
+            subject = '¡Bienvenido a la Pokédex!'
+            message = (
+                f'Hola {user.first_name},\n\n'
+                f'Tu cuenta fue registrada exitosamente.\n'
+                f'Usuario: {user.username}\n'
+                f'Contraseña: {password}\n\n'
+                '¡Gracias por unirte!'
+            )
+            try:
+                send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
+                messages.success(request, 'Usuario registrado exitosamente. Se envió un correo con tus credenciales.')
+            except Exception as e:
+                print(f"Error enviando correo: {e}")
+                messages.warning(request, 'Usuario registrado, pero no se pudo enviar el correo.')
 
-        if User.objects.filter(username=username).exists():
-            messages.error(request, 'El nombre de usuario ya está en uso.')
-            return render(request, 'register.html', {
-                'first_name': first_name,
-                'last_name': last_name,
-                'username': username,
-                'email': email
-            })
+            return redirect('login')
+    else:
+        form = UserRegisterForm()
 
-        if User.objects.filter(email=email).exists():
-            messages.error(request, 'El correo electrónico ya está en uso.')
-            return render(request, 'register.html', {
-                'first_name': first_name,
-                'last_name': last_name,
-                'username': username,
-                'email': email
-            })
+    return render(request, 'register.html', {'form': form})
 
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password,
-            first_name=first_name,
-            last_name=last_name
-        )
-
-        subject = '¡Bienvenido a la Pokédex!'
-        message = (
-            f'Hola {first_name},\n\n'
-            f'Tu cuenta fue registrada exitosamente.\n'
-            f'Usuario: {username}\n'
-            f'Contraseña: {password}\n\n'
-            '¡Gracias por unirte!'
-        )
-
-        try:
-            send_mail(subject, message, settings.EMAIL_HOST_USER, [email], fail_silently=False)
-            messages.success(request, 'Usuario registrado exitosamente. Se envió un correo con tus credenciales.')
-        except Exception as e:
-            print(f"Error enviando correo: {e}")
-            messages.warning(request, 'Usuario registrado, pero no se pudo enviar el correo.')
-
-        return redirect('login')
-
-    return render(request, 'register.html')

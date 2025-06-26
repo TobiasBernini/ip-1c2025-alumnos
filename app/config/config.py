@@ -29,11 +29,13 @@ TYPE_ID_MAP = {
 
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 EMAIL_HOST_USER = 'tobiasbernini@gmail.com'            # Tu correo Gmail
-EMAIL_HOST_PASSWORD = 'bpktnnhzbgbcecjg'              # Clave de aplicación generada en Gmail
+EMAIL_HOST_PASSWORD = 'hbqfeehjdwskxssj'              # Clave de aplicación generada en Gmail
 # No uses tu contraseña normal
 
