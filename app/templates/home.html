@@ -2,26 +2,6 @@
 <main>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
-    <!-- Spinner general -->
-    <div id="global-spinner" style="
-        position: fixed;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 9999;
-        background-color: #e0e0d1;
-        border: 8px double #222;
-        padding: 50px 70px;
-        text-align: center;
-        border-radius: 12px;
-        font-family: 'Press Start 2P', monospace;
-        color: #222;
-        box-shadow: 0 0 25px rgba(0,0,0,0.6);
-        display: none;
-        min-width: 340px;">
-        <img src="https://i.imgur.com/2LAGnTu.gif" alt="Loading..." width="90" style="margin-bottom: 20px;">
-        <div style="font-size: 16px;">CARGANDO...</div>
-    </div>
-
     <!-- Título -->
     <h1 class="text-center pokedex-search-title">Buscador de Pokémon</h1>
 
@@ -120,6 +100,11 @@
     </div>
 </main>
 
+<div id="global-spinner">
+    <img src="https://i.imgur.com/2LAGnTu.gif" alt="Loading..." width="90" class="spinner-image">
+    <div class="spinner-text">CARGANDO...</div>
+</div>
+
 <script>
     window.addEventListener('load', function () {
         document.getElementById('global-spinner').style.display = 'none';
@@ -134,4 +119,5 @@
         });
     });
 </script>
+
 {% endblock %}

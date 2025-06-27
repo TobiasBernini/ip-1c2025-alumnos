@@ -6,13 +6,19 @@ from django.contrib.auth import logout,get_user
 from .layers.services.services import filterByCharacter,filterByType
 from .layers.utilities import translator
 from .layers.persistence import repositories
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from .forms import UserRegisterForm
+
 
 def index_page(request):
     return render(request, 'index.html')
 
 # esta función obtiene 2 listados: uno de las imágenes de la API y otro de favoritos, ambos en formato Card, y los dibuja en el template 'home.html'.
 def home(request):
-    images = services.getAllImages()  # todas las imágenes Pokémon
+    images = services.getAllImages()  # todas las imagenes Pokemon
     favourite_list = services.getAllFavourites(request)  # favoritos del usuario (objetos Card)
     favorite_names = [fav.name for fav in favourite_list]  # lista solo con nombres
 
@@ -71,22 +77,18 @@ def exit(request):
     return redirect('home')
 
 #funcion nueva para los mails
-from django.conf import settings
-from django.contrib import messages
-from django.contrib.auth.models import User
-from django.core.mail import send_mail
-from .forms import UserRegisterForm
+
 
 def register_user(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
-        if form.is_valid():
+        if form.is_valid():#verifica que sea valido lo enviado
             user = form.save(commit=False)
             password = form.cleaned_data['password']
             user.set_password(password)
-            user.save()
+            user.save()#guarda el user
 
-            # Enviar correo
+           #esta parte envia el mensaje al correo
             subject = '¡Bienvenido a la Pokédex!'
             message = (
                 f'Hola {user.first_name},\n\n'
@@ -96,13 +98,13 @@ def register_user(request):
                 '¡Gracias por unirte!'
             )
             try:
-                send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
-                messages.success(request, 'Usuario registrado exitosamente. Se envió un correo con tus credenciales.')
+                send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)# se envia el correo al email que ingresó el usuario.
+                messages.success(request, 'Usuario registrado exitosamente. Se envió un correo con tus credenciales.')# se muestra un mensaje en el formulario
             except Exception as e:
                 print(f"Error enviando correo: {e}")
-                messages.warning(request, 'Usuario registrado, pero no se pudo enviar el correo.')
+                messages.warning(request, 'Usuario registrado, pero no se pudo enviar el correo.')#esto lo que hace es que si falla el envio del correo te avisa y muestra el error en consola 
 
-            return redirect('login')
+            return redirect('login') #mandamos al usuario al login 
     else:
         form = UserRegisterForm()
 

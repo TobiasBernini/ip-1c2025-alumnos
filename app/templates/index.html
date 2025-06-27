@@ -16,12 +16,48 @@
             ¡Bienvenido, <span class="pokedex-screen">{{ user.username|upper }}</span>!
         </h2>
         <p class="welcome-text">Estás listo para continuar tu aventura Pokémon.</p>
-        <a href="{% url 'home' %}" class="welcome-button">Ir a la Pokédex</a>
+
+        <form action="{% url 'home' %}" method="get">
+            <button type="submit" class="welcome-button">Ir a la Pokédex</button>
+        </form>
         {% else %}
         <h2 class="welcome-title">¡Bienvenido Entrenador!</h2>
         <p class="welcome-text">Iniciá sesión para acceder a la Pokédex.</p>
-        <a href="{% url 'home' %}" class="welcome-button">Ver Pokedex</a>
+
+        <form action="{% url 'home' %}" method="get">
+            <button type="submit" class="welcome-button">Ver Pokedex</button>
+        </form>
         {% endif %}
+
     </div>
 </div>
+
+<div id="global-spinner">
+    <img src="https://i.imgur.com/2LAGnTu.gif" alt="Loading..." width="90" class="spinner-image">
+    <div class="spinner-text">CARGANDO...</div>
+</div>
+
+<script>
+    window.addEventListener('load', function () {
+        document.getElementById('global-spinner').style.display = 'none';
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const spinner = document.getElementById('global-spinner');
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+            form.addEventListener('submit', function () {
+                spinner.style.display = 'block';
+            });
+        });
+        const link = document.getElementById('spinner-link-home');
+        if (link) {
+            link.addEventListener('click', function () {
+                spinner.style.display = 'block';
+            });
+        }
+    });
+</script>
+
+
 {% endblock %}

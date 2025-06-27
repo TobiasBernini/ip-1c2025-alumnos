@@ -8,29 +8,29 @@ from django.contrib.auth import get_user
 
 # función que devuelve un listado de cards. Cada card representa una imagen de la API de Pokemon
 def getAllImages():
-    lista_pokemon = transport.getAllImages() # Pide todos los Pokémon desde transport.py
-    cards = [translator.fromRequestIntoCard(pokemon) for pokemon in lista_pokemon]# Recorre la lista y convierte cada uno en una Card usando el traductor
-    return cards # Devuelve la lista completa de Cards
+    lista_pokemon = transport.getAllImages() # pide todos los Pokemon desde transport.py
+    cards = [translator.fromRequestIntoCard(pokemon) for pokemon in lista_pokemon]# recorre la lista y convierte cada uno en una Card usando el traductor
+    return cards # devuelve la lista completa de Cards
 
 
 # función que filtra según el nombre del pokemon.
 def filterByCharacter(name):
-    filtered_cards = []  # Acá guardamos las cartas que coincidan con la búsqueda
-    nombreminusculas = name.lower()  # Pasamos el nombre ingresado a minúsculas
-    cartas = getAllImages()  # Obtenemos todas las cartas
+    filtered_cards = []  # aca guardamos las cartas que coincidan con la busqueda
+    nombreminusculas = name.lower()  # pasamos el nombre ingresado a minusculas
+    cartas = getAllImages()  # obtenemos todas las cartas
     for card in cartas:
-        # Si el nombre buscado está dentro del nombre del Pokémon (sin importar mayúsculas)
+        # si el nombre buscado esta dentro del nombre del Pokemon 
         if nombreminusculas in card.name.lower():
-            filtered_cards.append(card)  # Lo agregamos a la lista filtrada
+            filtered_cards.append(card)  # lo agregamos a la lista filtrada
     return filtered_cards
 
 
 # función que filtra las cards según su tipo.
 def filterByType(type_filter):
-    filtered_cards = []  # Lista para guardar los Pokémon que coincidan con el tipo
-    # Recorremos todas las cartas que devuelve getAllImages()
+    filtered_cards = []  # lista para guardar los Pokemon que coincidan con el tipo
+    # recorre todas las cartas que devuelve getAllImages
     for card in getAllImages():
-        # Si el tipo buscado está en los tipos del Pokémon, lo agregamos a la lista
+        # si el tipo buscado esta en los tipos del Pokemon lo agregamos a la lista
         if type_filter in card.types:
             filtered_cards.append(card)
     return filtered_cards
@@ -43,7 +43,7 @@ def saveFavourite(request):
     fav.user = get_user(request)
 
     if repositories.favourite_exists(fav):
-        return False  # Ya existe, no guardamos
+        return False 
     else:
         repositories.save_favourite(fav)
         return True
@@ -56,7 +56,7 @@ def getAllFavourites(request):
 
     user = get_user(request)
 
-    favourite_list = repositories.get_all_favourites(user)  # ← función que devuelve queryset o lista de diccionarios
+    favourite_list = repositories.get_all_favourites(user) 
     mapped_favourites = [translator.fromRepositoryIntoCard(fav) for fav in favourite_list]
 
     return mapped_favourites
